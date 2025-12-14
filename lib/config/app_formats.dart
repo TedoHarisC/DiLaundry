@@ -23,9 +23,9 @@ class AppFormats {
 
   static String shortDate(dynamic source) {
     switch (source.runtimeType) {
-      case DateTime:
+      case DateTime _:
         return DateFormat('EEEE, dd MMM yyyy').format(source);
-      case String:
+      case String _:
         return DateFormat(
           'EEEE, dd MMM yyyy',
         ).format(DateTime.parse(source).toLocal());
@@ -36,9 +36,9 @@ class AppFormats {
 
   static String fullDate(dynamic source) {
     switch (source.runtimeType) {
-      case DateTime:
+      case DateTime _:
         return DateFormat('EEEE, dd MMMM yyyy').format(source);
-      case String:
+      case String _:
         return DateFormat(
           'EEEE, dd MMMM yyyy',
         ).format(DateTime.parse(source).toLocal());
