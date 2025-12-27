@@ -1,4 +1,6 @@
+import 'package:d_button/d_button.dart';
 import 'package:d_input/d_input.dart';
+import 'package:d_view/d_view.dart';
 import 'package:dilaundry/config/app_assets.dart';
 import 'package:dilaundry/config/app_colors.dart';
 import 'package:dilaundry/config/app_constants.dart';
@@ -17,6 +19,12 @@ class _RegisterPageState extends State<RegisterPage> {
   final edtEmail = TextEditingController();
   final edtPassword = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  void executeRegister() {
+    // String username = edtUsername.text;
+    // String email = edtEmail.text;
+    // String password = edtPassword.text;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +47,12 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
           SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Column(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(30, 60, 30, 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
                     children: [
                       Text(
                         AppConstants.appName,
@@ -63,27 +72,140 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ],
                   ),
-                ),
-                Form(
-                  key: formKey,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: DInput(
-                              controller: edtUsername,
-                              fillColor: Colors.white70,
-                              hint: 'Username',
-                              radius: BorderRadius.circular(10),
-                            ),
+                  Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        // Instrinsict Height di dalam
+                        // column agar Row bisa mengisi tinggi sesuai konten yang
+                        // lain di dalam column
+                        IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: Material(
+                                  color: Colors.white70,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                              DView.width(10),
+                              Expanded(
+                                child: DInput(
+                                  controller: edtUsername,
+                                  fillColor: Colors.white70,
+                                  hint: 'Username',
+                                  radius: BorderRadius.circular(10),
+                                  validator: (input) =>
+                                      input == '' ? "Don't empty" : null,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        DView.height(16),
+                        IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: Material(
+                                  color: Colors.white70,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Icon(
+                                    Icons.email,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                              DView.width(10),
+                              Expanded(
+                                child: DInput(
+                                  controller: edtEmail,
+                                  fillColor: Colors.white70,
+                                  hint: 'Email',
+                                  radius: BorderRadius.circular(10),
+                                  validator: (input) =>
+                                      input == '' ? "Don't empty" : null,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        DView.height(16),
+                        IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: Material(
+                                  color: Colors.white70,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Icon(
+                                    Icons.key,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                              DView.width(10),
+                              Expanded(
+                                child: DInputPassword(
+                                  controller: edtPassword,
+                                  fillColor: Colors.white70,
+                                  hint: 'Password',
+                                  radius: BorderRadius.circular(10),
+                                  validator: (input) =>
+                                      input == '' ? "Don't empty" : null,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        DView.height(16),
+                        IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: DButtonFlat(
+                                  onClick: () {},
+                                  padding: const EdgeInsets.all(0),
+                                  radius: 10,
+                                  mainColor: Colors.white70,
+                                  child: const Text(
+                                    'LOG',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DView.width(10),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () => executeRegister(),
+                                  style: const ButtonStyle(
+                                    alignment: Alignment.centerLeft,
+                                  ),
+                                  child: const Text(
+                                    'Register',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
