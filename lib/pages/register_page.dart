@@ -4,7 +4,11 @@ import 'package:d_view/d_view.dart';
 import 'package:dilaundry/config/app_assets.dart';
 import 'package:dilaundry/config/app_colors.dart';
 import 'package:dilaundry/config/app_constants.dart';
+import 'package:dilaundry/config/app_response.dart';
+import 'package:dilaundry/config/failure.dart';
+import 'package:dilaundry/datasources/user_datasource.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -21,9 +25,88 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   void executeRegister() {
-    // String username = edtUsername.text;
-    // String email = edtEmail.text;
-    // String password = edtPassword.text;
+    // Validasi input
+    bool validInput = formKey.currentState!.validate();
+    if (!validInput) return;
+
+    UserDatasource.register(
+      edtUsername.text,
+      edtEmail.text,
+      edtPassword.text,
+    ).then((result) {
+      String newStatus = '';
+      result.fold(
+        (failure) {
+          switch (failure.runtimeType) {
+            case ServerFailure _:
+              newStatus = 'Server Error';
+              Fluttertoast.showToast(
+                msg: newStatus,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+              );
+              break;
+            case NotFoundFailure _:
+              newStatus = 'Resource Not Found';
+              Fluttertoast.showToast(
+                msg: newStatus,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+              );
+              break;
+            case ForbiddenFailure _:
+              newStatus = 'Access Forbidden';
+              Fluttertoast.showToast(
+                msg: newStatus,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+              );
+              break;
+            case BadRequestFailure _:
+              newStatus = 'Bad Request';
+              Fluttertoast.showToast(
+                msg: newStatus,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+              );
+              break;
+            case InvalidInputFailure _:
+              newStatus = 'Invalid Input: ${failure.message}';
+              AppResponse.invalidInput(context, newStatus);
+              break;
+            default:
+              newStatus = 'Unexpected Error';
+              Fluttertoast.showToast(
+                msg: newStatus,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+              );
+              newStatus = failure.message;
+              break;
+          }
+        },
+        (data) {
+          Fluttertoast.showToast(
+            msg: 'Register Successful',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+          Navigator.pop(context);
+        },
+      );
+    });
   }
 
   @override
