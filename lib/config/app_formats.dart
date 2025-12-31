@@ -25,6 +25,7 @@ class AppFormats {
     switch (source.runtimeType) {
       case DateTime _:
         return DateFormat('EEEE, dd MMM yyyy').format(source);
+      // ignore: pattern_never_matches_value_type
       case String _:
         return DateFormat(
           'EEEE, dd MMM yyyy',
@@ -38,6 +39,7 @@ class AppFormats {
     switch (source.runtimeType) {
       case DateTime _:
         return DateFormat('EEEE, dd MMMM yyyy').format(source);
+      // ignore: pattern_never_matches_value_type
       case String _:
         return DateFormat(
           'EEEE, dd MMMM yyyy',

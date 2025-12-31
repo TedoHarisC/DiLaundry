@@ -7,18 +7,20 @@ import 'package:dilaundry/config/app_constants.dart';
 import 'package:dilaundry/config/app_response.dart';
 import 'package:dilaundry/config/failure.dart';
 import 'package:dilaundry/datasources/user_datasource.dart';
+import 'package:dilaundry/providers/register_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final edtUsername = TextEditingController();
   final edtEmail = TextEditingController();
   final edtPassword = TextEditingController();
@@ -28,6 +30,9 @@ class _RegisterPageState extends State<RegisterPage> {
     // Validasi input
     bool validInput = formKey.currentState!.validate();
     if (!validInput) return;
+
+    // Set status to loading
+    setRegisterStatus(ref, 'Loading');
 
     UserDatasource.register(
       edtUsername.text,
@@ -79,8 +84,8 @@ class _RegisterPageState extends State<RegisterPage> {
               );
               break;
             case InvalidInputFailure _:
-              newStatus = 'Invalid Input: ${failure.message}';
-              AppResponse.invalidInput(context, newStatus);
+              newStatus = 'Invalid Input';
+              AppResponse.invalidInput(context, failure.message);
               break;
             default:
               newStatus = 'Unexpected Error';
@@ -94,6 +99,9 @@ class _RegisterPageState extends State<RegisterPage> {
               newStatus = failure.message;
               break;
           }
+
+          // Set status to error
+          setRegisterStatus(ref, newStatus);
         },
         (data) {
           Fluttertoast.showToast(
@@ -103,6 +111,8 @@ class _RegisterPageState extends State<RegisterPage> {
             backgroundColor: Colors.green,
             textColor: Colors.white,
           );
+          // Set status to success
+          setRegisterStatus(ref, 'Success');
           Navigator.pop(context);
         },
       );
@@ -270,15 +280,25 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               DView.width(10),
                               Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () => executeRegister(),
-                                  style: const ButtonStyle(
-                                    alignment: Alignment.centerLeft,
-                                  ),
-                                  child: const Text(
-                                    'Register',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                child: Consumer(
+                                  builder: (_, ref, __) {
+                                    String registerStatus = ref.watch(
+                                      registerStatusProvider,
+                                    );
+                                    if (registerStatus == 'Loading') {
+                                      return DView.loadingCircle();
+                                    }
+                                    return ElevatedButton(
+                                      onPressed: () => executeRegister(),
+                                      style: const ButtonStyle(
+                                        alignment: Alignment.centerLeft,
+                                      ),
+                                      child: const Text(
+                                        'Register',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
