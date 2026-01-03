@@ -13,8 +13,18 @@ class AppResponse {
     switch (response.statusCode) {
       case 200: // read
       case 201: // create, update
-        var responseBody = jsonDecode(response.body);
-        return responseBody;
+        final body = response.body;
+        if (body.trim().isEmpty) {
+          // Some APIs return empty body on success — treat as empty map
+          return <String, dynamic>{};
+        }
+        try {
+          final responseBody = jsonDecode(body);
+          return responseBody;
+        } catch (e) {
+          // Provide a clearer failure for invalid JSON
+          throw FetchFailure('Invalid JSON response: ${e.toString()}');
+        }
       case 204: // delete
         return {'success': true};
       case 400:
